@@ -1,4 +1,3 @@
+from .main import setup_menus
 
-from .main import setup_addon
-
-setup_addon()
+setup_menus()
