@@ -5,8 +5,14 @@ from aqt.qt import *
 from PyQt5 import QtCore
 import logging
 
+from .analysermenu import AnalyserMenu
+
 def launch_menu():
-    pass
+    if hasattr(mw, "AnalyserMenu") and mw.AnalyserMenu.visible:
+        tooltip("Addon has already launched")
+        return
+    menu = AnalyserMenu()
+    menu.exec_()
 
 def setup_menus():
     launch_action = QAction("Chinese Prestudy", mw)
