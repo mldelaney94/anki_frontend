@@ -8,12 +8,12 @@ class AnalyserMenu(QDialog):
 
     def __init__(self):
         QDialog.__init__(self, parent=mw)
-        self.sort_by_freq = 0
-        self.exclude_surname = 0
-        self.add_parts_of_speech_to_output = 0
+        self.sort_by_freq = False
+        self.exclude_surname = True 
+        self.add_parts_of_speech_to_output = False
         self.hsk_level = 0
         self.tocfl_level = 0
-        self.add_freq_to_output = 0
+        self.add_freq_to_output = False
         self.upper_freq_bound = 8.0
         self.lower_freq_bound = 0.0
         self.simp_or_trad = 'trad'
@@ -21,11 +21,6 @@ class AnalyserMenu(QDialog):
         self.setupUi()
 
     def setupUi(self):
-        tab_1_label = QLabel("Text1")
-        tab_2_label = QLabel("Options")
-        tab_3_label = QLabel("Finish")
-
-
         # Tab 1 layout
         tab_1 = QWidget()
         tab_1_text_box_label = QLabel('Please paste or type the text that you '
@@ -53,14 +48,17 @@ class AnalyserMenu(QDialog):
                 'lower cutoff (default 0.0)')
         tab_2_add_surnames_label = QLabel('Add surname info to card')
         tab_2_simple_or_trad_label = QLabel('Traditional (default Simplified)')
+        tab_2_sort_by_freq_label = QLabel('Sort by frequency')
 
         tab_2_layout = QGridLayout()
+        #This line must be changed to be 1 higher than the highest line number
+        #in the layout
+        tab_2_layout.setRowStretch(7, 100) 
         tab_2_layout.setSpacing(10)
 
         tab_2_layout.addWidget(tab_2_heading, 0, 0, 1, 3)
         rule = self.create_horizontal_rule()
         tab_2_layout.addWidget(rule, 1, 0, 1, -1)
-
 
         tab_2_hsk_input = QLineEdit()
         tab_2_hsk_input.setPlaceholderText('0-6')
@@ -81,6 +79,9 @@ class AnalyserMenu(QDialog):
         tab_2_freq_button = QCheckBox('')
         tab_2_surnames_button = QCheckBox('')
         tab_2_simple_or_trad_button = QCheckBox('')
+        tab_2_sort_by_freq_button = QCheckBox('')
+        
+        tab_2_pos_button.clicked.connect(self.set_sort_by_freq)
 
         tab_2_layout.addWidget(tab_2_hsk_label, 2, 0)
         tab_2_layout.addWidget(tab_2_hsk_input, 2, 1)
@@ -98,17 +99,34 @@ class AnalyserMenu(QDialog):
         tab_2_layout.addWidget(tab_2_simple_or_trad_button, 5, 1)
         tab_2_layout.addWidget(tab_2_add_surnames_label, 5, 2)
         tab_2_layout.addWidget(tab_2_surnames_button, 5, 3)
+        tab_2_layout.addWidget(tab_2_sort_by_freq_label, 6, 0)
+        tab_2_layout.addWidget(tab_2_sort_by_freq_button, 6, 1)
 
         tab_2.setLayout(tab_2_layout)
 
         # Tab 3 layout
+        tab_3 = QWidget()
+        tab_3_heading = QLabel("Review your options on the previous pages "
+                "and press 'finish' to start")
+        tab_3_heading.setWordWrap(True)
+        tab_3_finish_button = QPushButton("Finish", self)
+        #Sets the width of the button according the size of the font and the
+        #num of chars
+        font_width = QFontMetrics(tab_3_finish_button.font())
+        tab_3_finish_button.setFixedWidth(font_width.width("   " + tab_3_finish_button.text() + "   "))
 
+        tab_3_layout = QVBoxLayout()
+        tab_3_layout.addWidget(tab_3_heading)
+        tab_3_layout.addWidget(tab_3_finish_button)
 
-        
+        tab_3_layout.addStretch(100)
+        tab_3.setLayout(tab_3_layout)
+
+        #Tab bar layout
         tabWidget = QTabWidget()
         tabWidget.addTab(tab_1, 'Text')
         tabWidget.addTab(tab_2, 'Options')
-        tabWidget.addTab(tab_3_label, 'Finish')
+        tabWidget.addTab(tab_3, 'Finish')
 
         tabWidget.setTabToolTip(0, 'Use this tab to define the body of text '
                 'you want to create cards for')
@@ -131,3 +149,45 @@ class AnalyserMenu(QDialog):
         frame.setFrameShape(QFrame.HLine)
         frame.setFrameShadow(QFrame.Sunken)
         return frame
+
+        self.sort_by_freq = True
+        self.exclude_surname = True
+        self.add_parts_of_speech_to_output = False
+        self.hsk_level = 0
+        self.tocfl_level = 0
+        self.add_freq_to_output = False
+        self.upper_freq_bound = 8.0
+        self.lower_freq_bound = 0.0
+        self.simp_or_trad = 'trad'
+
+    def set_sort_by_freq(self):
+        self.sort_by_freq = not self.sort_by_freq
+
+    def set_exclude_surname(self):
+        self.exclude_surname = not self.exclude_surname
+
+    def set_add_parts_of_speech_to_output(self):
+        self.add_parts_of_speech_to_output = not self.add_parts_of_speech_to_output
+    
+    def set_hsk_level(self, level):
+        self.hsk_level = level
+
+    def set_tocfl_level(self, level):
+        self.tocfl_level = level
+
+    def set_add_freq_to_output(self):
+        self.add_freq_to_output = not self.add_freq_to_output
+
+    def set_upper_freq_bound(self, bound):
+        self.upper_freq_bound = bound
+
+    def set_lower_freq_bound(self, bound):
+        self.lower_freq_bound = bound
+
+    def set_simp_or_trad(self):
+        if self.simp_or_trad == 'trad':
+            self.simp_or_trad = 'simp'
+        else:
+            self.simp_or_trad = 'trad'
+    
+
