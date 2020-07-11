@@ -96,7 +96,13 @@ class AnalyserMenu(QDialog):
         tab_2_sort_by_freq_button.clicked.connect(self.set_sort_by_freq)
 
         list_of_widgets = []
+        rule1 = self.create_horizontal_rule()
+        rule2 = self.create_horizontal_rule()
+        rule3 = self.create_horizontal_rule()
 
+        list_of_widgets.append(tab_2_simple_or_trad_label)
+        list_of_widgets.append(tab_2_simple_or_trad_button)
+        list_of_widgets.append(rule1)
         list_of_widgets.append(tab_2_hsk_label)
         list_of_widgets.append(tab_2_hsk_input)
         list_of_widgets.append(tab_2_tocfl_label)
@@ -105,24 +111,22 @@ class AnalyserMenu(QDialog):
         list_of_widgets.append(tab_2_freq_lower_limit_input)
         list_of_widgets.append(tab_2_freq_upper_limit_label)
         list_of_widgets.append(tab_2_freq_upper_limit_input)
-        list_of_widgets.append(tab_2_POS_label)
-        list_of_widgets.append(tab_2_pos_button)
+        list_of_widgets.append(rule2)
         list_of_widgets.append(tab_2_freq_label)
         list_of_widgets.append(tab_2_freq_button)
-        list_of_widgets.append(tab_2_simple_or_trad_label)
-        list_of_widgets.append(tab_2_simple_or_trad_button)
+        list_of_widgets.append(tab_2_POS_label)
+        list_of_widgets.append(tab_2_pos_button)
+        list_of_widgets.append(tab_2_sort_by_freq_label)
+        list_of_widgets.append(tab_2_sort_by_freq_button)
         list_of_widgets.append(tab_2_add_surnames_definition_label)
         list_of_widgets.append(tab_2_surnames_button_def)
         list_of_widgets.append(tab_2_add_surnames_tag_label)
         list_of_widgets.append(tab_2_surnames_button_tag)
-        list_of_widgets.append(tab_2_sort_by_freq_label)
-        list_of_widgets.append(tab_2_sort_by_freq_button)
 
         tab_2_layout = place_in_tab_widget(QGridLayout(), list_of_widgets)
 
         tab_2_layout.addWidget(tab_2_heading, 0, 0, 1, 3)
-        rule = self.create_horizontal_rule()
-        tab_2_layout.addWidget(rule, 1, 0, 1, -1)
+        tab_2_layout.addWidget(rule3, 1, 0, 1, -1)
 
         tab_2.setLayout(tab_2_layout)
 
@@ -167,10 +171,10 @@ class AnalyserMenu(QDialog):
         """
         Returns a QFrame that is a sunken, horizontal rule.
         """
-        frame = QFrame()
-        frame.setFrameShape(QFrame.HLine)
-        frame.setFrameShadow(QFrame.Sunken)
-        return frame
+        rule = QFrame()
+        rule.setFrameShape(QFrame.HLine)
+        rule.setFrameShadow(QFrame.Sunken)
+        return rule
 
     def set_sort_by_freq(self):
         self.sort_by_freq = not self.sort_by_freq
