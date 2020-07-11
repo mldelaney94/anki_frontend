@@ -2,7 +2,7 @@ from aqt.qt import *
 from aqt.utils import showInfo
 
 from aqt import mw
-from anki.errors import AnkiError 
+from anki.errors import AnkiError
 
 from .utils import *
 
@@ -11,8 +11,8 @@ class AnalyserMenu(QDialog):
     def __init__(self):
         QDialog.__init__(self, parent=mw)
         self.sort_by_freq = False
-        self.exclude_surname_tag = True 
-        self.exclude_surname_def = True 
+        self.exclude_surname_tag = True
+        self.exclude_surname_def = True
         self.add_parts_of_speech_to_output = False
         self.hsk_level = 0
         self.tocfl_level = 0
@@ -75,7 +75,7 @@ class AnalyserMenu(QDialog):
         tab_2_tocfl_input.setPlaceholderText('0-6')
         tab_2_tocfl_input.setFixedWidth(25)
         tab_2_tocfl_input.setToolTip(hsk_tocfl_tooltip)
-        
+
         tab_2_freq_upper_limit_input = QLineEdit()
         tab_2_freq_upper_limit_input.setPlaceholderText('0.0-8.0')
         tab_2_freq_upper_limit_input.setFixedWidth(45)
@@ -91,42 +91,26 @@ class AnalyserMenu(QDialog):
         tab_2_sort_by_freq_button = QCheckBox('')
         tab_2_sort_by_freq_button.setToolTip('Most frequent cards will come up '
                 'first, according to zipf frequency')
-        
+
         tab_2_pos_button.clicked.connect(self.set_add_parts_of_speech_to_output)
         tab_2_sort_by_freq_button.clicked.connect(self.set_sort_by_freq)
 
-        list_of_widgets = []
-        rule1 = self.create_horizontal_rule()
-        rule2 = self.create_horizontal_rule()
         rule3 = self.create_horizontal_rule()
 
-        list_of_widgets.append(tab_2_simple_or_trad_label)
-        list_of_widgets.append(tab_2_simple_or_trad_button)
-        list_of_widgets.append(rule1)
-        list_of_widgets.append(tab_2_hsk_label)
-        list_of_widgets.append(tab_2_hsk_input)
-        list_of_widgets.append(tab_2_tocfl_label)
-        list_of_widgets.append(tab_2_tocfl_input)
-        list_of_widgets.append(tab_2_freq_lower_limit_label)
-        list_of_widgets.append(tab_2_freq_lower_limit_input)
-        list_of_widgets.append(tab_2_freq_upper_limit_label)
-        list_of_widgets.append(tab_2_freq_upper_limit_input)
-        list_of_widgets.append(rule2)
-        list_of_widgets.append(tab_2_freq_label)
-        list_of_widgets.append(tab_2_freq_button)
-        list_of_widgets.append(tab_2_POS_label)
-        list_of_widgets.append(tab_2_pos_button)
-        list_of_widgets.append(tab_2_sort_by_freq_label)
-        list_of_widgets.append(tab_2_sort_by_freq_button)
-        list_of_widgets.append(tab_2_add_surnames_definition_label)
-        list_of_widgets.append(tab_2_surnames_button_def)
-        list_of_widgets.append(tab_2_add_surnames_tag_label)
-        list_of_widgets.append(tab_2_surnames_button_tag)
+        list_of_widgets = [
+            [ tab_2_heading ],
+            [ self.create_horizontal_rule() ],
+            [ tab_2_simple_or_trad_label, tab_2_simple_or_trad_button ],
+            [ self.create_horizontal_rule() ],
+            [ tab_2_hsk_label, tab_2_hsk_input, tab_2_tocfl_label, tab_2_tocfl_input ],
+            [ tab_2_freq_lower_limit_label, tab_2_freq_lower_limit_input, tab_2_freq_upper_limit_label, tab_2_freq_upper_limit_input ],
+            [ self.create_horizontal_rule() ],
+            [ tab_2_freq_label, tab_2_freq_button, tab_2_POS_label, tab_2_pos_button ],
+            [ tab_2_sort_by_freq_label, tab_2_sort_by_freq_button, tab_2_add_surnames_definition_label, tab_2_surnames_button_def ],
+            [ tab_2_add_surnames_tag_label, tab_2_surnames_button_tag ]
+        ]
 
         tab_2_layout = place_in_tab_widget(QGridLayout(), list_of_widgets)
-
-        tab_2_layout.addWidget(tab_2_heading, 0, 0, 1, 3)
-        tab_2_layout.addWidget(rule3, 1, 0, 1, -1)
 
         tab_2.setLayout(tab_2_layout)
 
@@ -181,13 +165,13 @@ class AnalyserMenu(QDialog):
 
     def set_exclude_surname_tag(self):
         self.exclude_surname_tag = not self.exclude_surname_tag
-    
+
     def set_exclude_surname_def(self):
         self.exclude_surname_def = not self.exclude_surname_def
 
     def set_add_parts_of_speech_to_output(self):
         self.add_parts_of_speech_to_output = not self.add_parts_of_speech_to_output
-    
+
     def set_hsk_level(self, level):
         self.hsk_level = level
 
@@ -208,5 +192,3 @@ class AnalyserMenu(QDialog):
             self.simp_or_trad = 'simp'
         else:
             self.simp_or_trad = 'trad'
-    
-
