@@ -4,12 +4,15 @@ from aqt.utils import showInfo
 from aqt import mw
 from anki.errors import AnkiError 
 
+from .utils import *
+
 class AnalyserMenu(QDialog):
 
     def __init__(self):
         QDialog.__init__(self, parent=mw)
         self.sort_by_freq = False
-        self.exclude_surname = True 
+        self.exclude_surname_tag = True 
+        self.exclude_surname_def = True 
         self.add_parts_of_speech_to_output = False
         self.hsk_level = 0
         self.tocfl_level = 0
@@ -38,35 +41,40 @@ class AnalyserMenu(QDialog):
                                 'use')
         tab_2_heading.setWordWrap(True)
 
+        hsk_tocfl_tooltip = 'All words of a level LOWER than the input will be excluded. I.e. \'4\' means levels 1, 2 and 3 are removed'
+
         tab_2_hsk_label = QLabel('Level of HSK filtering')
+        tab_2_hsk_label.setToolTip(hsk_tocfl_tooltip)
         tab_2_tocfl_label = QLabel('Level of TOCFL filtering')
-        tab_2_POS_label = QLabel('Add Parts of Speech to card')
-        tab_2_freq_label = QLabel('Add frequency info to card')
+        tab_2_tocfl_label.setToolTip(hsk_tocfl_tooltip)
+        tab_2_POS_label = QLabel('Add Parts of Speech to card (tag)')
+        tab_2_freq_label = QLabel('Add zipf frequency info to card (tag)')
         tab_2_freq_upper_limit_label = QLabel('Designate the zipf frequency '
                 'upper cutoff (default 8.0)')
         tab_2_freq_lower_limit_label = QLabel('Designate the zipf frequency '
                 'lower cutoff (default 0.0)')
-        tab_2_add_surnames_label = QLabel('Add surname info to card')
+        tab_2_add_surnames_definition_label = QLabel('Add surname to card '
+                '(definition)')
+        tab_2_add_surnames_definition_label.setToolTip('Adds \'surname\' to the '
+                'card\'s definition')
+        tab_2_add_surnames_tag_label = QLabel('Add surname to card (tag)')
+        tab_2_add_surnames_tag_label.setToolTip('Adds \'surname\' to the card\'s '
+                'tags')
         tab_2_simple_or_trad_label = QLabel('Traditional (default Simplified)')
         tab_2_sort_by_freq_label = QLabel('Sort by frequency')
+        tab_2_sort_by_freq_label.setToolTip('Most frequent cards will come up '
+                'first, according to zipf frequency')
 
-        tab_2_layout = QGridLayout()
-        #This line must be changed to be 1 higher than the highest line number
-        #in the layout
-        tab_2_layout.setRowStretch(7, 100) 
-        tab_2_layout.setSpacing(10)
-
-        tab_2_layout.addWidget(tab_2_heading, 0, 0, 1, 3)
-        rule = self.create_horizontal_rule()
-        tab_2_layout.addWidget(rule, 1, 0, 1, -1)
 
         tab_2_hsk_input = QLineEdit()
         tab_2_hsk_input.setPlaceholderText('0-6')
         tab_2_hsk_input.setFixedWidth(25)
+        tab_2_hsk_input.setToolTip(hsk_tocfl_tooltip)
 
         tab_2_tocfl_input = QLineEdit()
         tab_2_tocfl_input.setPlaceholderText('0-6')
         tab_2_tocfl_input.setFixedWidth(25)
+        tab_2_tocfl_input.setToolTip(hsk_tocfl_tooltip)
         
         tab_2_freq_upper_limit_input = QLineEdit()
         tab_2_freq_upper_limit_input.setPlaceholderText('0.0-8.0')
@@ -77,30 +85,44 @@ class AnalyserMenu(QDialog):
 
         tab_2_pos_button = QCheckBox('')
         tab_2_freq_button = QCheckBox('')
-        tab_2_surnames_button = QCheckBox('')
+        tab_2_surnames_button_def = QCheckBox('')
+        tab_2_surnames_button_tag = QCheckBox('')
         tab_2_simple_or_trad_button = QCheckBox('')
         tab_2_sort_by_freq_button = QCheckBox('')
+        tab_2_sort_by_freq_button.setToolTip('Most frequent cards will come up '
+                'first, according to zipf frequency')
         
-        tab_2_pos_button.clicked.connect(self.set_sort_by_freq)
+        tab_2_pos_button.clicked.connect(self.set_add_parts_of_speech_to_output)
+        tab_2_sort_by_freq_button.clicked.connect(self.set_sort_by_freq)
 
-        tab_2_layout.addWidget(tab_2_hsk_label, 2, 0)
-        tab_2_layout.addWidget(tab_2_hsk_input, 2, 1)
-        tab_2_layout.addWidget(tab_2_tocfl_label, 2, 2)
-        tab_2_layout.addWidget(tab_2_tocfl_input, 2, 3)
-        tab_2_layout.addWidget(tab_2_freq_lower_limit_label, 3, 0)
-        tab_2_layout.addWidget(tab_2_freq_lower_limit_input, 3, 1)
-        tab_2_layout.addWidget(tab_2_freq_upper_limit_label, 3, 2)
-        tab_2_layout.addWidget(tab_2_freq_upper_limit_input, 3, 3)
-        tab_2_layout.addWidget(tab_2_POS_label, 4, 0)
-        tab_2_layout.addWidget(tab_2_pos_button, 4, 1)
-        tab_2_layout.addWidget(tab_2_freq_label, 4, 2)
-        tab_2_layout.addWidget(tab_2_freq_button, 4, 3)
-        tab_2_layout.addWidget(tab_2_simple_or_trad_label, 5, 0)
-        tab_2_layout.addWidget(tab_2_simple_or_trad_button, 5, 1)
-        tab_2_layout.addWidget(tab_2_add_surnames_label, 5, 2)
-        tab_2_layout.addWidget(tab_2_surnames_button, 5, 3)
-        tab_2_layout.addWidget(tab_2_sort_by_freq_label, 6, 0)
-        tab_2_layout.addWidget(tab_2_sort_by_freq_button, 6, 1)
+        list_of_widgets = []
+
+        list_of_widgets.append(tab_2_hsk_label)
+        list_of_widgets.append(tab_2_hsk_input)
+        list_of_widgets.append(tab_2_tocfl_label)
+        list_of_widgets.append(tab_2_tocfl_input)
+        list_of_widgets.append(tab_2_freq_lower_limit_label)
+        list_of_widgets.append(tab_2_freq_lower_limit_input)
+        list_of_widgets.append(tab_2_freq_upper_limit_label)
+        list_of_widgets.append(tab_2_freq_upper_limit_input)
+        list_of_widgets.append(tab_2_POS_label)
+        list_of_widgets.append(tab_2_pos_button)
+        list_of_widgets.append(tab_2_freq_label)
+        list_of_widgets.append(tab_2_freq_button)
+        list_of_widgets.append(tab_2_simple_or_trad_label)
+        list_of_widgets.append(tab_2_simple_or_trad_button)
+        list_of_widgets.append(tab_2_add_surnames_definition_label)
+        list_of_widgets.append(tab_2_surnames_button_def)
+        list_of_widgets.append(tab_2_add_surnames_tag_label)
+        list_of_widgets.append(tab_2_surnames_button_tag)
+        list_of_widgets.append(tab_2_sort_by_freq_label)
+        list_of_widgets.append(tab_2_sort_by_freq_button)
+
+        tab_2_layout = place_in_tab_widget(QGridLayout(), list_of_widgets)
+
+        tab_2_layout.addWidget(tab_2_heading, 0, 0, 1, 3)
+        rule = self.create_horizontal_rule()
+        tab_2_layout.addWidget(rule, 1, 0, 1, -1)
 
         tab_2.setLayout(tab_2_layout)
 
@@ -150,21 +172,14 @@ class AnalyserMenu(QDialog):
         frame.setFrameShadow(QFrame.Sunken)
         return frame
 
-        self.sort_by_freq = True
-        self.exclude_surname = True
-        self.add_parts_of_speech_to_output = False
-        self.hsk_level = 0
-        self.tocfl_level = 0
-        self.add_freq_to_output = False
-        self.upper_freq_bound = 8.0
-        self.lower_freq_bound = 0.0
-        self.simp_or_trad = 'trad'
-
     def set_sort_by_freq(self):
         self.sort_by_freq = not self.sort_by_freq
 
-    def set_exclude_surname(self):
-        self.exclude_surname = not self.exclude_surname
+    def set_exclude_surname_tag(self):
+        self.exclude_surname_tag = not self.exclude_surname_tag
+    
+    def set_exclude_surname_def(self):
+        self.exclude_surname_def = not self.exclude_surname_def
 
     def set_add_parts_of_speech_to_output(self):
         self.add_parts_of_speech_to_output = not self.add_parts_of_speech_to_output
