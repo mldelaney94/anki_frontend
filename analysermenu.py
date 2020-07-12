@@ -11,26 +11,26 @@ class AnalyserMenu(QDialog):
     def __init__(self):
         QDialog.__init__(self, parent=mw)
         self.sort_by_freq = False
-        self.exclude_surname_tag = True
-        self.exclude_surname_def = True
+        self.include_surname_tag = False
+        self.include_surname_def = False
         self.add_parts_of_speech_to_output = False
         self.hsk_level = 0
         self.tocfl_level = 0
         self.add_freq_to_output = False
         self.upper_freq_bound = 8.0
         self.lower_freq_bound = 0.0
-        self.simp_or_trad = 'trad'
+        self.simp_or_trad = 'simp'
 
         self.setupUi()
 
     def setupUi(self):
         # Tab 1 layout
         tab_1 = QWidget()
-        tab_1_text_box_label = QLabel('Please paste or type the text that you '
+        tab_1_heading = QLabel('Please paste or type the text that you '
                                         'want to analyse')
         text_box = QTextEdit()
         tab_1_layout = QVBoxLayout()
-        tab_1_layout.addWidget(tab_1_text_box_label)
+        tab_1_layout.addWidget(tab_1_heading)
         tab_1_layout.addWidget(text_box)
 
         tab_1.setLayout(tab_1_layout)
@@ -39,10 +39,8 @@ class AnalyserMenu(QDialog):
         tab_2 = QWidget()
         tab_2_heading = QLabel('Please select the filtering options you wish to '
                                 'use')
-        tab_2_heading.setWordWrap(True)
 
         hsk_tocfl_tooltip = 'All words of a level LOWER than the input will be excluded. I.e. \'4\' means levels 1, 2 and 3 are removed'
-
         tab_2_hsk_label = QLabel('Level of HSK filtering')
         tab_2_hsk_label.setToolTip(hsk_tocfl_tooltip)
         tab_2_tocfl_label = QLabel('Level of TOCFL filtering')
@@ -56,61 +54,49 @@ class AnalyserMenu(QDialog):
         tab_2_add_surnames_definition_label = QLabel('Add surname to card '
                 '(definition)')
         tab_2_add_surnames_definition_label.setToolTip('Adds \'surname\' to the '
-                'card\'s definition')
+                'card\'s definition (NOT RECOMMENDED)')
         tab_2_add_surnames_tag_label = QLabel('Add surname to card (tag)')
         tab_2_add_surnames_tag_label.setToolTip('Adds \'surname\' to the card\'s '
-                'tags')
+                'tags (RECOMMENDED)')
         tab_2_simple_or_trad_label = QLabel('Traditional (default Simplified)')
         tab_2_sort_by_freq_label = QLabel('Sort by frequency')
         tab_2_sort_by_freq_label.setToolTip('Most frequent cards will come up '
                 'first, according to zipf frequency')
 
+        tab_2_hsk_input = create_input_box('0-6', '')
+        tab_2_tocfl_input = create_input_box('0-6', '')
 
-        tab_2_hsk_input = QLineEdit()
-        tab_2_hsk_input.setPlaceholderText('0-6')
-        tab_2_hsk_input.setFixedWidth(25)
-        tab_2_hsk_input.setToolTip(hsk_tocfl_tooltip)
-
-        tab_2_tocfl_input = QLineEdit()
-        tab_2_tocfl_input.setPlaceholderText('0-6')
-        tab_2_tocfl_input.setFixedWidth(25)
-        tab_2_tocfl_input.setToolTip(hsk_tocfl_tooltip)
-
-        tab_2_freq_upper_limit_input = QLineEdit()
-        tab_2_freq_upper_limit_input.setPlaceholderText('0.0-8.0')
-        tab_2_freq_upper_limit_input.setFixedWidth(45)
-        tab_2_freq_lower_limit_input = QLineEdit()
-        tab_2_freq_lower_limit_input.setPlaceholderText('0.0-8.0')
-        tab_2_freq_lower_limit_input.setFixedWidth(45)
+        tab_2_freq_upper_limit_input = create_input_box('0.0-8.0', '')
+        tab_2_freq_lower_limit_input = create_input_box('0.0-8.0', '')
 
         tab_2_pos_button = QCheckBox('')
         tab_2_freq_button = QCheckBox('')
-        tab_2_surnames_button_def = QCheckBox('')
-        tab_2_surnames_button_tag = QCheckBox('')
+        tab_2_surnames_def_button = QCheckBox('')
+        tab_2_surnames_tag_button = QCheckBox('')
         tab_2_simple_or_trad_button = QCheckBox('')
         tab_2_sort_by_freq_button = QCheckBox('')
-        tab_2_sort_by_freq_button.setToolTip('Most frequent cards will come up '
-                'first, according to zipf frequency')
 
         tab_2_pos_button.clicked.connect(self.set_add_parts_of_speech_to_output)
         tab_2_sort_by_freq_button.clicked.connect(self.set_sort_by_freq)
-
-        rule3 = self.create_horizontal_rule()
+        tab_2_freq_button.clicked.connect(self.set_add_freq_to_output)
+        tab_2_surnames_tag_button.clicked.connect(self.set_include_surname_tag)
+        tab_2_surnames_def_button.clicked.connect(self.set_include_surname_def)
+        tab_2_simple_or_trad_button.clicked.connect(self.set_simp_or_trad)
 
         list_of_widgets = [
             [ tab_2_heading ],
-            [ self.create_horizontal_rule() ],
+            [ create_horizontal_rule() ],
             [ tab_2_simple_or_trad_label, tab_2_simple_or_trad_button ],
-            [ self.create_horizontal_rule() ],
+            [ create_horizontal_rule() ],
             [ tab_2_hsk_label, tab_2_hsk_input, tab_2_tocfl_label, tab_2_tocfl_input ],
             [ tab_2_freq_lower_limit_label, tab_2_freq_lower_limit_input, tab_2_freq_upper_limit_label, tab_2_freq_upper_limit_input ],
-            [ self.create_horizontal_rule() ],
+            [ create_horizontal_rule() ],
             [ tab_2_freq_label, tab_2_freq_button, tab_2_POS_label, tab_2_pos_button ],
-            [ tab_2_sort_by_freq_label, tab_2_sort_by_freq_button, tab_2_add_surnames_definition_label, tab_2_surnames_button_def ],
-            [ tab_2_add_surnames_tag_label, tab_2_surnames_button_tag ]
+            [ tab_2_sort_by_freq_label, tab_2_sort_by_freq_button, tab_2_add_surnames_definition_label, tab_2_surnames_def_button ],
+            [ tab_2_add_surnames_tag_label, tab_2_surnames_tag_button ]
         ]
 
-        tab_2_layout = place_in_tab_widget(QGridLayout(), list_of_widgets)
+        tab_2_layout = place_in_grid(QGridLayout(), list_of_widgets)
 
         tab_2.setLayout(tab_2_layout)
 
@@ -151,23 +137,14 @@ class AnalyserMenu(QDialog):
         self.setMinimumHeight(640)
         self.setWindowTitle('Chinese Prestudy')
 
-    def create_horizontal_rule(self):
-        """
-        Returns a QFrame that is a sunken, horizontal rule.
-        """
-        rule = QFrame()
-        rule.setFrameShape(QFrame.HLine)
-        rule.setFrameShadow(QFrame.Sunken)
-        return rule
-
     def set_sort_by_freq(self):
         self.sort_by_freq = not self.sort_by_freq
 
-    def set_exclude_surname_tag(self):
-        self.exclude_surname_tag = not self.exclude_surname_tag
+    def set_include_surname_tag(self):
+        self.include_surname_tag = not self.include_surname_tag
 
-    def set_exclude_surname_def(self):
-        self.exclude_surname_def = not self.exclude_surname_def
+    def set_include_surname_def(self):
+        self.include_surname_def = not self.include_surname_def
 
     def set_add_parts_of_speech_to_output(self):
         self.add_parts_of_speech_to_output = not self.add_parts_of_speech_to_output
