@@ -26,11 +26,17 @@ class AnalyserMenu(QDialog):
     def setupUi(self):
         # Tab 1 layout
         tab_1 = QWidget()
-        tab_1_heading = QLabel('Please paste or type the text that you '
-                                        'want to analyse')
+        tab_1_deck_name_info = QLabel('Please enter the name of the deck you '
+                'wish to create (must be unique):')
+        tab_1_text_box_info = QLabel('Please paste or type the text that you '
+                'want to analyse:')
+        deck_name_box = QLineEdit()
         text_box = QTextEdit()
+
         tab_1_layout = QVBoxLayout()
-        tab_1_layout.addWidget(tab_1_heading)
+        tab_1_layout.addWidget(tab_1_deck_name_info)
+        tab_1_layout.addWidget(deck_name_box)
+        tab_1_layout.addWidget(tab_1_text_box_info)
         tab_1_layout.addWidget(text_box)
 
         tab_1.setLayout(tab_1_layout)
