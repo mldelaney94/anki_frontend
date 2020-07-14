@@ -31,16 +31,21 @@ def create_horizontal_rule():
     return rule
 
 
-def create_input_box(place_holder_text, tooltip):
+def create_spin_box(typeof, minimum, maximum):
     """
-    Creates a QLineEdit with just enough width for the placeholder text
+    Creates a QSpinBox or QDoubleSpinBox with a default width
     """
-    input_box = QLineEdit()
-    input_box.setPlaceholderText(place_holder_text)
+    box = ''
+    if typeof == 'double':
+        box = QDoubleSpinBox()
+        box.setDecimals(1)
+        box.setSingleStep(0.1)
+    elif typeof == 'normal':
+        box = QSpinBox()
 
-    #Sets width according to width of characters
-    font = QFontMetrics(input_box.font())
-    input_box.setFixedWidth(font.width("  " + place_holder_text + "  "))
-    input_box.setToolTip(tooltip)
+    box.setMinimum(minimum)
+    box.setMaximum(maximum)
 
-    return input_box
+    box.setFixedWidth(45)
+
+    return box
