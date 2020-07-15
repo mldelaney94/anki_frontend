@@ -20,6 +20,8 @@ class AnalyserMenu(QDialog):
         self.upper_freq_bound = 8.0
         self.lower_freq_bound = 0.0
         self.simp_or_trad = 'simp'
+        self.deck_name = ''
+        self.zh_input = ''
 
         self.setupUi()
 
@@ -30,14 +32,15 @@ class AnalyserMenu(QDialog):
                 'wish to create (must be unique):')
         tab_1_text_box_info = QLabel('Please paste or type the text that you '
                 'want to analyse:')
-        deck_name_box = QLineEdit()
-        text_box = QTextEdit()
+        tab_1_deck_name_box = QLineEdit()
+        tab_1_deck_name_box.setPlaceholderText('Name... ')
+        tab_1_text_box = QTextEdit()
 
         tab_1_layout = QVBoxLayout()
         tab_1_layout.addWidget(tab_1_deck_name_info)
-        tab_1_layout.addWidget(deck_name_box)
+        tab_1_layout.addWidget(tab_1_deck_name_box)
         tab_1_layout.addWidget(tab_1_text_box_info)
-        tab_1_layout.addWidget(text_box)
+        tab_1_layout.addWidget(tab_1_text_box)
 
         tab_1.setLayout(tab_1_layout)
 
@@ -54,9 +57,11 @@ class AnalyserMenu(QDialog):
         tab_2_POS_label = QLabel('Add Parts of Speech to card (tag)')
         tab_2_freq_label = QLabel('Add zipf frequency info to card (tag)')
         tab_2_freq_upper_limit_label = QLabel('Designate the zipf frequency '
-                'upper cutoff (default 8.0)')
+                'upper cutoff (default 8.0). Leave at 8.0 if no filtering '
+                'desired')
         tab_2_freq_lower_limit_label = QLabel('Designate the zipf frequency '
-                'lower cutoff (default 0.0)')
+                'lower cutoff (default 0.0). Leave at 0.0 if no filtering '
+                'desired')
         tab_2_add_surnames_definition_label = QLabel('Add surname to card '
                 '(definition)')
         tab_2_add_surnames_definition_label.setToolTip('Adds \'surname\' to the '
@@ -116,6 +121,10 @@ class AnalyserMenu(QDialog):
         #num of chars
         font_width = QFontMetrics(tab_3_finish_button.font())
         tab_3_finish_button.setFixedWidth(font_width.width("   " + tab_3_finish_button.text() + "   "))
+        tab_3_finish_button.clicked.connect(lambda:
+                self.set_deck_name(tab_1_deck_name_box.text()))
+        tab_3_finish_button.clicked.connect(lambda:
+                self.set_zh_input(tab_1_text_box.toPlainText()))
 
         tab_3_layout = QVBoxLayout()
         tab_3_layout.addWidget(tab_3_heading)
@@ -175,3 +184,9 @@ class AnalyserMenu(QDialog):
             self.simp_or_trad = 'simp'
         else:
             self.simp_or_trad = 'trad'
+
+    def set_deck_name(self, _deck_name):
+        self.deck_name = _deck_name
+
+    def set_zh_input(self, _zh_input):
+        self.zh_input = _zh_input
