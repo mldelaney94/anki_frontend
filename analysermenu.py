@@ -5,6 +5,7 @@ from aqt import mw
 from anki.errors import AnkiError
 
 from .utils import *
+from .zh_analyser import zh_analyser
 
 class AnalyserMenu(QDialog):
 
@@ -46,10 +47,9 @@ class AnalyserMenu(QDialog):
 
         # Tab 2 layout
         tab_2 = QWidget()
-        tab_2_heading = QLabel('Please select the filtering options you wish to '
-                                'use')
+        tab_2_heading = QLabel('Please select the options you wish to use')
 
-        hsk_tocfl_tooltip = 'All words of a level LOWER than the input will be excluded. I.e. \'4\' means levels 1, 2 and 3 are removed'
+        hsk_tocfl_tooltip = 'Removes all words at a level <= the number in the box'
         tab_2_hsk_label = QLabel('Level of HSK filtering')
         tab_2_hsk_label.setToolTip(hsk_tocfl_tooltip)
         tab_2_tocfl_label = QLabel('Level of TOCFL filtering')
@@ -64,25 +64,22 @@ class AnalyserMenu(QDialog):
                 'desired')
         tab_2_add_surnames_definition_label = QLabel('Add surname to card '
                 '(definition)')
-        tab_2_add_surnames_definition_label.setToolTip('Adds \'surname\' to the '
-                'card\'s definition (NOT RECOMMENDED)')
         tab_2_add_surnames_tag_label = QLabel('Add surname to card (tag)')
         tab_2_add_surnames_tag_label.setToolTip('Adds \'surname\' to the card\'s '
-                'tags (RECOMMENDED)')
+                'tags')
         tab_2_simple_or_trad_label = QLabel('Traditional (default Simplified)')
         tab_2_sort_by_freq_label = QLabel('Sort by frequency')
         tab_2_sort_by_freq_label.setToolTip('Most frequent cards will come up '
                 'first, according to zipf frequency')
 
-        tab_2_hsk_input = create_spin_box('normal', 0, 7)
-        tab_2_tocfl_input = create_spin_box('normal', 0, 7)
+        tab_2_hsk_input = create_spin_box('normal', 0, 6, 0)
+        tab_2_tocfl_input = create_spin_box('normal', 0, 5, 0)
 
-        tab_2_freq_upper_limit_input = create_spin_box('double', 0.0, 8.0)
-        tab_2_freq_lower_limit_input = create_spin_box('double', 0.0, 8.0)
+        tab_2_freq_upper_limit_input = create_spin_box('double', 0.0, 8.0, 8.0)
+        tab_2_freq_lower_limit_input = create_spin_box('double', 0.0, 8.0, 0.0)
 
         tab_2_pos_button = QCheckBox('')
         tab_2_freq_button = QCheckBox('')
-        tab_2_surnames_def_button = QCheckBox('')
         tab_2_surnames_tag_button = QCheckBox('')
         tab_2_simple_or_trad_button = QCheckBox('')
         tab_2_sort_by_freq_button = QCheckBox('')
@@ -91,7 +88,6 @@ class AnalyserMenu(QDialog):
         tab_2_sort_by_freq_button.clicked.connect(self.set_sort_by_freq)
         tab_2_freq_button.clicked.connect(self.set_add_freq_to_output)
         tab_2_surnames_tag_button.clicked.connect(self.set_include_surname_tag)
-        tab_2_surnames_def_button.clicked.connect(self.set_include_surname_def)
         tab_2_simple_or_trad_button.clicked.connect(self.set_simp_or_trad)
 
         list_of_widgets = [
@@ -103,8 +99,7 @@ class AnalyserMenu(QDialog):
             [ tab_2_freq_lower_limit_label, tab_2_freq_lower_limit_input, tab_2_freq_upper_limit_label, tab_2_freq_upper_limit_input ],
             [ create_horizontal_rule() ],
             [ tab_2_freq_label, tab_2_freq_button, tab_2_POS_label, tab_2_pos_button ],
-            [ tab_2_sort_by_freq_label, tab_2_sort_by_freq_button, tab_2_add_surnames_definition_label, tab_2_surnames_def_button ],
-            [ tab_2_add_surnames_tag_label, tab_2_surnames_tag_button ]
+            [ tab_2_sort_by_freq_label, tab_2_sort_by_freq_button, tab_2_add_surnames_tag_label, tab_2_surnames_tag_button ],
         ]
 
         tab_2_layout = place_in_grid(QGridLayout(), list_of_widgets)
@@ -125,6 +120,16 @@ class AnalyserMenu(QDialog):
                 self.set_deck_name(tab_1_deck_name_box.text()))
         tab_3_finish_button.clicked.connect(lambda:
                 self.set_zh_input(tab_1_text_box.toPlainText()))
+        tab_3_finish_button.clicked.connect(lambda:
+                self.set_upper_freq_bound(tab_2_freq_upper_limit_input.value()))
+        tab_3_finish_button.clicked.connect(lambda:
+                self.set_lower_freq_bound(tab_2_freq_lower_limit_input.value()))
+        tab_3_finish_button.clicked.connect(lambda:
+                analyse(self.text, sort_by_freq,
+                    self.add_freq_to_output, self.hsk_level, self.tocfl_level,
+                    self.simp_or_trad, self.add_parts_of_speech_to_output,
+                    self.upper_freq_bound, self.lower_freq_bound,
+                    self.deck_name, self.include_surname_tag))
 
         tab_3_layout = QVBoxLayout()
         tab_3_layout.addWidget(tab_3_heading)
@@ -174,10 +179,12 @@ class AnalyserMenu(QDialog):
         self.add_freq_to_output = not self.add_freq_to_output
 
     def set_upper_freq_bound(self, bound):
-        self.upper_freq_bound = bound
+        if self.upper_freq_bound > self.lower_freq_bound:
+            self.upper_freq_bound = bound
 
     def set_lower_freq_bound(self, bound):
-        self.lower_freq_bound = bound
+        if self.lower_freq_bound < self.upper_freq_bound:
+            self.lower_freq_bound = bound
 
     def set_simp_or_trad(self):
         if self.simp_or_trad == 'trad':

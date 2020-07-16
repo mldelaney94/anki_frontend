@@ -31,7 +31,7 @@ def create_horizontal_rule():
     return rule
 
 
-def create_spin_box(typeof, minimum, maximum):
+def create_spin_box(typeof, minimum, maximum, default_value):
     """
     Creates a QSpinBox or QDoubleSpinBox with a default width
     """
@@ -45,6 +45,7 @@ def create_spin_box(typeof, minimum, maximum):
 
     box.setMinimum(minimum)
     box.setMaximum(maximum)
+    box.setValue(default_value)
 
     box.setFixedWidth(45)
 
