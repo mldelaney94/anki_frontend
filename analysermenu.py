@@ -125,7 +125,7 @@ class AnalyserMenu(QDialog):
         tab_3_finish_button.clicked.connect(lambda:
                 self.set_lower_freq_bound(tab_2_freq_lower_limit_input.value()))
         tab_3_finish_button.clicked.connect(lambda:
-                analyse(self.text, sort_by_freq,
+                zh_analyser.analyse(self.zh_input, self.sort_by_freq,
                     self.add_freq_to_output, self.hsk_level, self.tocfl_level,
                     self.simp_or_trad, self.add_parts_of_speech_to_output,
                     self.upper_freq_bound, self.lower_freq_bound,
