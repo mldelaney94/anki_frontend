@@ -130,6 +130,7 @@ class AnalyserMenu(QDialog):
                     self.simp_or_trad, self.add_parts_of_speech_to_output,
                     self.upper_freq_bound, self.lower_freq_bound,
                     self.deck_name, self.include_surname_tag))
+        tab_3_finish_button.clicked.connect(lambda: self.close())
 
         tab_3_layout = QVBoxLayout()
         tab_3_layout.addWidget(tab_3_heading)

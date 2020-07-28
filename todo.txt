@@ -1,0 +1,4 @@
+1. test that everything works the way that you think it should (buttons on and off, all combinations, maybe
+automate testing)
+
+2. figure out how to create a deck from the file that is output
