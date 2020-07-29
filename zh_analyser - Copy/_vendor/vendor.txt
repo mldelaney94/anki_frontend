@@ -1,0 +1,8 @@
+jieba
+pynlpir
+more_itertools
+wordfreq
+marisa-trie
+langcodes
+click
+regex
