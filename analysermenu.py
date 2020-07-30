@@ -6,6 +6,7 @@ from anki.errors import AnkiError
 
 from .utils import *
 from .zh_analyser import zh_analyser
+from .noteManager import getOrCreateDeck 
 
 class AnalyserMenu(QDialog):
 
@@ -114,6 +115,8 @@ class AnalyserMenu(QDialog):
         tab_3_finish_button = QPushButton("Finish", self)
         #Sets the width of the button according the size of the font and the
         #num of chars
+        deck = []
+
         font_width = QFontMetrics(tab_3_finish_button.font())
         tab_3_finish_button.setFixedWidth(font_width.width("   " + tab_3_finish_button.text() + "   "))
         tab_3_finish_button.clicked.connect(lambda:
@@ -130,6 +133,8 @@ class AnalyserMenu(QDialog):
                     self.simp_or_trad, self.add_parts_of_speech_to_output,
                     self.upper_freq_bound, self.lower_freq_bound,
                     self.deck_name, self.include_surname_tag))
+        tab_3_finish_button.clicked.connect(lambda:
+                getOrCreateDeck(deck_name))
         tab_3_finish_button.clicked.connect(lambda: self.close())
 
         tab_3_layout = QVBoxLayout()

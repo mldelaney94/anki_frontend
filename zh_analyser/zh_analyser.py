@@ -21,7 +21,6 @@ tocfl_1_5_trad_file = os.path.join(folder, 'materials/TOCFL_materials/TOCFL_1-5_
 import jieba
 import jieba.posseg
 import more_itertools
-import pynlpir
 import wordfreq
 
 from materials.cc_cedict_materials import cc_cedict_parser
