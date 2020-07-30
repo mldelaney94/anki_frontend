@@ -1,1 +1,3 @@
-2. figure out how to create a deck from the file that is output
+1. figure out how to create a deck from the file that is output
+
+2. remove the unnecessary plugin pynlpir
