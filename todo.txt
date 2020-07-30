@@ -1,7 +1,1 @@
-1. test that everything works the way that you think it should (buttons on and off, all combinations, maybe
-automate testing)
-
-2. change language tagging to use JIEBA rather than pynlpir because pynlpir has a cert that expires every so
-often and is therefore unsuitable
-
 2. figure out how to create a deck from the file that is output
