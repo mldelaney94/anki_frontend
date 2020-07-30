@@ -98,16 +98,10 @@ class TestAnalyser(unittest.TestCase):
             lower_freq_bound, upper_freq_bound, add_freq_to_output),
             self.small_word_list)
 
-    def test_add_parts_of_speech_to_output(self):
-        add_pos_to_output = True
-        self.assertEqual(zh_analyser.add_parts_of_speech(self.small_word_list,
-            add_pos_to_output), [['你好', ['pronoun', 'personal pronoun']],
-                ['給', ['noun']], ['個', ['noun']], ['個哥各也頁', ['noun']]])
-
     def test_add_parts_of_speech_do_not_add(self):
-        add_pos_to_output = False
+        add_parts_of_speech = False
         self.assertEqual(zh_analyser.add_parts_of_speech(self.small_word_list,
-            add_pos_to_output),
+            add_parts_of_speech),
                 self.small_word_list)
 
     def test_sort_by_freq_freq_descending(self):
@@ -142,13 +136,13 @@ class TestAnalyser(unittest.TestCase):
 
     def test_remove_trad_tocfl_vocab_remove_all(self):
         simp_or_trad = 'trad'
-        tocfl_level = 5
+        tocfl_level = 6
         self.assertEqual(zh_analyser.remove_tocfl_vocab(self.tocfl_trad_list,
             tocfl_level, simp_or_trad), [])
     
     def test_remove_simp_tocfl_vocab_remove_all(self):
         simp_or_trad = 'simp'
-        tocfl_level = 5
+        tocfl_level = 6
         self.assertEqual(zh_analyser.remove_tocfl_vocab(self.tocfl_simp_list,
             tocfl_level, simp_or_trad), [])
 
@@ -186,6 +180,83 @@ class TestAnalyser(unittest.TestCase):
         self.assertEqual(len(zh_analyser.remove_hsk_vocab(self.hsk_simp_list,
             hsk_level, simp_or_trad)),
             4400)
+
+    def test_remove_trad_hsk_vocab_remove_lvl_3(self):
+        simp_or_trad = 'trad'
+        hsk_level = 3
+        self.assertEqual(len(zh_analyser.remove_hsk_vocab(self.hsk_trad_list,
+            hsk_level, simp_or_trad)),
+            4400)
+
+    def test_remove_simp_tocfl_vocab_remove_lvl_1(self):
+        simp_or_trad = 'simp'
+        tocfl_level = 1
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_simp_list,
+            tocfl_level, simp_or_trad)),
+            6082-315)
+
+    def test_remove_trad_tocfl_vocab_remove_lvl_1(self):
+        simp_or_trad = 'trad'
+        tocfl_level = 1
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_trad_list,
+            tocfl_level, simp_or_trad)),
+            6082-315)
+
+    def test_remove_simp_tocfl_vocab_remove_lvl_2(self):
+        simp_or_trad = 'simp'
+        tocfl_level = 2
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_simp_list,
+            tocfl_level, simp_or_trad)),
+            6082-563)
+
+    def test_remove_trad_tocfl_vocab_remove_lvl_2(self):
+        simp_or_trad = 'trad'
+        tocfl_level = 2
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_trad_list,
+            tocfl_level, simp_or_trad)),
+            6082-563)
+
+    def test_remove_simp_tocfl_vocab_remove_lvl_3(self):
+        simp_or_trad = 'simp'
+        tocfl_level = 3
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_simp_list,
+            tocfl_level, simp_or_trad)),
+            6082-909)
+
+    def test_remove_trad_tocfl_vocab_remove_lvl_3(self):
+        simp_or_trad = 'trad'
+        tocfl_level = 3
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_trad_list,
+            tocfl_level, simp_or_trad)),
+            6082-909)
+
+    def test_remove_simp_tocfl_vocab_remove_lvl_4(self):
+        simp_or_trad = 'simp'
+        tocfl_level = 4
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_simp_list,
+            tocfl_level, simp_or_trad)),
+            6082-3490)
+
+    def test_remove_trad_tocfl_vocab_remove_lvl_4(self):
+        simp_or_trad = 'trad'
+        tocfl_level = 4
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_trad_list,
+            tocfl_level, simp_or_trad)),
+            6082-3490)
+
+    def test_remove_simp_tocfl_vocab_remove_lvl_5(self):
+        simp_or_trad = 'simp'
+        tocfl_level = 5
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_simp_list,
+            tocfl_level, simp_or_trad)),
+            0)
+
+    def test_remove_trad_tocfl_vocab_remove_lvl_5(self):
+        simp_or_trad = 'trad'
+        tocfl_level = 5
+        self.assertEqual(len(zh_analyser.remove_tocfl_vocab(self.tocfl_trad_list,
+            tocfl_level, simp_or_trad)),
+            0)
 
 if __name__ == "__main__":
     unittest.main()

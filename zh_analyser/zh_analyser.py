@@ -15,10 +15,11 @@ sys.path.insert(0, libfolder)
 jieba_dict_large = os.path.join(folder, 'materials/dicts/jieba_dict_large.txt')
 hsk_1_6_simp_file = os.path.join(folder, 'materials/HSK_materials/HSK_1-6_simp.txt')
 hsk_1_6_trad_file = os.path.join(folder, 'materials/HSK_materials/HSK_1-6_trad.txt')
-tocfl_1_6_simp_file = os.path.join(folder, 'materials/TOCFL_materials/TOCFL_1-5_simp.txt')
-tocfl_1_6_trad_file = os.path.join(folder, 'materials/TOCFL_materials/TOCFL_1-5_trad.txt')
+tocfl_1_5_simp_file = os.path.join(folder, 'materials/TOCFL_materials/TOCFL_1-5_simp.txt')
+tocfl_1_5_trad_file = os.path.join(folder, 'materials/TOCFL_materials/TOCFL_1-5_trad.txt')
 
 import jieba
+import jieba.posseg
 import more_itertools
 import pynlpir
 import wordfreq
@@ -82,19 +83,20 @@ def add_parts_of_speech(word_list, add_parts_of_speech):
     return word_list
 
 def process_part_of_speech(pos):
-    """Jieba speech tagging can combine tags in weird ways, this function
-    extracts all the different types of tags and returns them as one list"""
+    """Jieba tags parts of speech, this changes their tag into something
+    readable for the user. It is not exhaustive, jieba's own docs are not
+    exhaustive and the parts of speech part has no translation"""
     pos_dict = {
-            'Ag': 'help', 'a': 'adj', 'ad': 'help', 'an': 'help', 'b':
-            'help', 'c': 'conj', 'dg': 'help', 'd': 'adv', 'e': 'exclamation',
-            'f': 'noun of locality', 'g': 'morpheme', 'h': 'help', 'i':
-            'chengyu', 'j': 'help', 'k': 'help', 'l': 'idiom', 'm': 'numeral',
-            'Ng': 'help', 'n': 'noun', 'nr': 'name', 'ns': 'place name',
-            'nt': 'help', 'nz': 'help/special', 'o': 'onomatopoeia',
+            'Ag': 'adj morpheme', 'a': 'adj', 'ad': 'adv/adj', 'an': 'adj/noun', 'b':
+            'classifier of type', 'c': 'conj', 'dg': 'adv morpheme', 'd': 'adv', 'e': 'exclamation',
+            'f': 'direction word', 'g': 'morpheme', 'h': 'prefix', 'i':
+            'chengyu', 'j': 'simple morpheme', 'k': 'suffix', 'l': 'idiom', 'm': 'numeral',
+            'Ng': 'noun morpheme', 'n': 'noun', 'nr': 'name', 'ns': 'place name',
+            'nt': 'time noun', 'nz': 'descriptive noun', 'o': 'onomatopoeia',
             'p': 'preposition', 'q': 'measure word', 'r': 'pronoun', 's':
-            's/f help', 'tg': 'time morpheme', 't': 'time', 'u': 'auxiliary',
-            'vg': 'verb morpheme', 'v': 'v', 'vd': 'help', 'vn': 'help', 'w':
-            'punctuation', 'x': 'help', 'y': 'modal verb', 'z': 'descriptive word',
+            'place word', 'tg': 'time morpheme', 't': 'time', 'u': 'auxiliary',
+            'vg': 'verb morpheme', 'v': 'verb', 'vd': 'adv/verb', 'vn': 'a name verb',
+            'w': 'punctuation', 'x': 'pronumeral', 'y': 'modal verb', 'z': 'descriptive word',
             'un': 'unknown'
             }
     if pos in pos_dict:
@@ -129,12 +131,12 @@ def remove_tocfl_vocab(word_list, tocfl_level, simp_or_trad):
     tocfl_dict = {}
     tocfl_removed_list = []
     if simp_or_trad == 'trad':
-        with open(tocfl_1_6_trad_file, 'r') as h:
+        with open(tocfl_1_5_trad_file, 'r') as h:
             for line in h:
                 liness = line.split()
                 tocfl_dict[liness[0]] = liness[1]
     else:
-        with open(tocfl_1_6_simp_file, 'r') as h:
+        with open(tocfl_1_5_simp_file, 'r') as h:
             for line in h:
                 liness = line.split()
                 tocfl_dict[liness[0]] = liness[1]
