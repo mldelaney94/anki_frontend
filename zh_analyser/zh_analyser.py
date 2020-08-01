@@ -23,7 +23,7 @@ import jieba.posseg
 import more_itertools
 import wordfreq
 
-from materials.cc_cedict_materials import cc_cedict_parser
+from .materials.cc_cedict_materials import cc_cedict_parser
 
 def segment_NLP(text):
     """ Segments newline separated zh input using Jieba NLP, returns a list of
@@ -59,18 +59,26 @@ def add_pinyin_and_definition(word_list, zh_dict, include_surname_tag):
     #words that where not found in the dictionary
     return word_list
 
-def filter_by_freq(word_list, lower_freq_bound, upper_freq_bound,
-        add_freq_to_output):
+def filter_by_freq(word_list, lower_freq_bound, upper_freq_bound):
     """Filters words based on their relative frequency and adds frequency info
     to the wordlist"""
     filtered_word_list = []
     for word in word_list:
         freq = wordfreq.zipf_frequency(word[0], 'zh', wordlist='large', minimum=0.0)
         if lower_freq_bound <= freq <= upper_freq_bound:
-            if add_freq_to_output:
-                word.append(freq)
             filtered_word_list.append(word)
     return filtered_word_list
+
+def add_freq(word_list, add_freq_to_output):
+    """ Adds frequencies to output """
+    if not add_freq_to_output:
+        return word_list
+    for word in word_list:
+        freq = wordfreq.zipf_frequency(word[0], 'zh', wordlist='large',
+                minimum=0.0)
+        word.append(freq)
+
+    return word_list
 
 def add_parts_of_speech(word_list, add_parts_of_speech):
     if not add_parts_of_speech:
@@ -153,6 +161,7 @@ def sort_by_freq(word_list, ascending, freq_sort):
     return sorted(word_list, key=itemgetter(1), reverse=ascending)
 
 def save_generated_list(word_list, location):
+    #deprecated
     with open(location + '.txt', 'w+') as g:
         for word in word_list:
             for part in word:
@@ -175,12 +184,13 @@ def analyse(zh_input, freq_sort, add_freq_to_output, hsk_level, tocfl_level,
     jieba.set_dictionary(jieba_dict_large)
 
     word_list = segment_NLP(zh_input)
-    word_list = filter_by_freq(word_list, lower_freq_bound, upper_freq_bound, add_freq_to_output)
+    word_list = filter_by_freq(word_list, lower_freq_bound, upper_freq_bound)
     word_list = remove_hsk_vocab(word_list, hsk_level, simp_or_trad)
     word_list = remove_tocfl_vocab(word_list, tocfl_level, simp_or_trad)
     word_list = add_pinyin_and_definition(word_list, zh_dict,
             include_surname_tag)
     word_list = add_parts_of_speech(word_list, add_speech_parts)
+    word_list = word_list.add_freq(word_list)
     word_list = sort_by_freq(word_list, 0, freq_sort)
 
-    save_generated_list(word_list, deck_name)
+    return word_list

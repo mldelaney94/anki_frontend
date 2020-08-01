@@ -1,4 +1,5 @@
-""" Unittests for zh_analyser """
+""" Unittests for zh_analyser. These will not work with zh_analyser unless you
+change the 'materials' import to not have a '.' in front of it"""
 
 import os
 import unittest
@@ -68,35 +69,34 @@ class TestAnalyser(unittest.TestCase):
     def test_filter_by_freq_normal(self):
         lower_freq_bound = 0.0
         upper_freq_bound = 8.0
-        add_freq_to_output = 1
         self.assertEqual(zh_analyser.filter_by_freq(self.small_word_list,
-            lower_freq_bound, upper_freq_bound, add_freq_to_output),
-            [['你好', 3.88], ['給', 6.19], ['個', 6.5],
-            ['個哥各也頁', 0.47]])
+            lower_freq_bound, upper_freq_bound),
+            [['你好'], ['給'], ['個'], ['個哥各也頁']])
 
     def test_filter_by_freq_small_bounds(self):
         lower_freq_bound = 3.0
         upper_freq_bound = 6.0
-        add_freq_to_output = 1
         self.assertEqual(zh_analyser.filter_by_freq(self.small_word_list,
-            lower_freq_bound, upper_freq_bound, add_freq_to_output),
-            [['你好', 3.88]])
+            lower_freq_bound, upper_freq_bound), [['你好']])
 
     def test_filter_by_freq_small_bounds_no_add_freq_output(self):
         lower_freq_bound = 3.0
         upper_freq_bound = 6.0
-        add_freq_to_output = 0
         self.assertEqual(zh_analyser.filter_by_freq(self.small_word_list,
-            lower_freq_bound, upper_freq_bound, add_freq_to_output),
-            [['你好']])
+            lower_freq_bound, upper_freq_bound), [['你好']])
 
     def test_filter_by_freq_no_filtering(self):
         lower_freq_bound = 0.0
         upper_freq_bound = 8.0
         add_freq_to_output = 0
         self.assertEqual(zh_analyser.filter_by_freq(self.small_word_list,
-            lower_freq_bound, upper_freq_bound, add_freq_to_output),
+            lower_freq_bound, upper_freq_bound),
             self.small_word_list)
+
+    def test_add_freq(self):
+        add_freq_to_output = 1
+        self.assertEqual(zh_analyser.add_freq(self.small_word_list,
+            add_freq_to_output), [['你好', 3.88], ['給', 6.19], ['個', 6.5], ['個哥各也頁', 0.47]])
 
     def test_add_parts_of_speech_do_not_add(self):
         add_parts_of_speech = False
@@ -107,20 +107,24 @@ class TestAnalyser(unittest.TestCase):
     def test_sort_by_freq_freq_descending(self):
         """Relies on [1] containing frequency int from 'filter_by_freq'"""
         add_freq_to_output = 1
-        self.small_word_list = zh_analyser.filter_by_freq(self.small_word_list,
-                0.0, 8.0, add_freq_to_output)
-        self.assertEqual(zh_analyser.sort_by_freq(self.small_word_list, 1,
-            add_freq_to_output),
+        ascending = 1
+        self.assertEqual(zh_analyser.sort_by_freq(zh_analyser.add_freq(self.small_word_list,
+            add_freq_to_output), ascending, 1),
             [['個', 6.5], ['給', 6.19], ['你好', 3.88], ['個哥各也頁', 0.47]])
     
     def test_sort_by_freq_ascending(self):
         """Relies on [1] containing frequency int from 'filter_by_freq'"""
         add_freq_to_output = 1
+        freq_sort = 1
+        ascending = 0
         self.small_word_list = zh_analyser.filter_by_freq(self.small_word_list,
-                0.0, 8.0, add_freq_to_output)
-        self.assertEqual(zh_analyser.sort_by_freq(self.small_word_list, 0,
-            add_freq_to_output),
-            [['個哥各也頁', 0.47], ['你好', 3.88], ['給', 6.19], ['個', 6.5]])
+                0.0, 8.0)
+        self.assertEqual(
+                zh_analyser.sort_by_freq(
+                    zh_analyser.add_freq(self.small_word_list, add_freq_to_output),
+                    ascending,
+                    freq_sort),
+                [['個哥各也頁', 0.47], ['你好', 3.88], ['給', 6.19], ['個', 6.5]])
 
     def test_remove_trad_hsk_vocab_remove_all(self):
         simp_or_trad = 'trad'

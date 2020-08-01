@@ -6,7 +6,7 @@ from anki.errors import AnkiError
 
 from .utils import *
 from .zh_analyser import zh_analyser
-from .noteManager import getOrCreateDeck 
+from .deck_maker import note_manager
 
 class AnalyserMenu(QDialog):
 
@@ -88,6 +88,7 @@ class AnalyserMenu(QDialog):
         tab_2_pos_button.clicked.connect(self.set_add_parts_of_speech_to_output)
         tab_2_sort_by_freq_button.clicked.connect(self.set_sort_by_freq)
         tab_2_freq_button.clicked.connect(self.set_add_freq_to_output)
+        tab_2_freq_button.toggled.connect(lambda: tab_2_sort_by_freq_button.setChecked(False))
         tab_2_surnames_tag_button.clicked.connect(self.set_include_surname_tag)
         tab_2_simple_or_trad_button.clicked.connect(self.set_simp_or_trad)
 
@@ -134,7 +135,9 @@ class AnalyserMenu(QDialog):
                     self.upper_freq_bound, self.lower_freq_bound,
                     self.deck_name, self.include_surname_tag))
         tab_3_finish_button.clicked.connect(lambda:
-                getOrCreateDeck(deck_name))
+                note_manager.getOrCreateDeck(self.deck_name))
+        tab_3_finish_button.clicked.connect(lambda:
+                note_manager.createModel())
         tab_3_finish_button.clicked.connect(lambda: self.close())
 
         tab_3_layout = QVBoxLayout()
