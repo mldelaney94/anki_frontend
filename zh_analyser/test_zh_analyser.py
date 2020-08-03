@@ -264,3 +264,4 @@ class TestAnalyser(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    print('All tests passed you are awesome!')
