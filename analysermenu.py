@@ -24,6 +24,7 @@ class AnalyserMenu(QDialog):
         self.simp_or_trad = 'simp'
         self.deck_name = ''
         self.zh_input = ''
+        self.words = []
 
         self.setupUi()
 
@@ -129,15 +130,13 @@ class AnalyserMenu(QDialog):
         tab_3_finish_button.clicked.connect(lambda:
                 self.set_lower_freq_bound(tab_2_freq_lower_limit_input.value()))
         tab_3_finish_button.clicked.connect(lambda:
-                zh_analyser.analyse(self.zh_input, self.sort_by_freq,
-                    self.add_freq_to_output, self.hsk_level, self.tocfl_level,
-                    self.simp_or_trad, self.add_parts_of_speech_to_output,
-                    self.upper_freq_bound, self.lower_freq_bound,
-                    self.deck_name, self.include_surname_tag))
+                self.menu_analyse())
         tab_3_finish_button.clicked.connect(lambda:
                 note_manager.getOrCreateDeck(self.deck_name))
         tab_3_finish_button.clicked.connect(lambda:
                 note_manager.createModel())
+        tab_3_finish_button.clicked.connect(lambda:
+                note_manager.addNotesFromList(self.deck_name, self.words))
         tab_3_finish_button.clicked.connect(lambda: self.close())
 
         tab_3_layout = QVBoxLayout()
@@ -206,3 +205,12 @@ class AnalyserMenu(QDialog):
 
     def set_zh_input(self, _zh_input):
         self.zh_input = _zh_input
+
+    def menu_analyse(self):
+        """Parses text and applies filters"""
+
+        self.words = zh_analyser.analyse(self.zh_input, self.sort_by_freq,
+                self.add_freq_to_output, self.hsk_level, self.tocfl_level,
+                self.simp_or_trad,
+                self.add_parts_of_speech_to_output, self.upper_freq_bound,
+                self.lower_freq_bound, self.include_surname_tag)

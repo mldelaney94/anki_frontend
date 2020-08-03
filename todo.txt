@@ -1,3 +1,8 @@
 1. figure out how to create a deck from the file that is output
 
 https://github.com/megachweng/Dict2Anki/blob/master/addon/addonWindow.py
+
+
+2. fix the sortfreq button
+
+3. fix the cards per eli's advice

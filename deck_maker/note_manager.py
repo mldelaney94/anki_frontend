@@ -1,5 +1,6 @@
 from aqt import mw
 import anki
+from collections import defaultdict
 
 MODEL_FIELDS = ['front', 'pinyin', 'back', 'audio']
 MODEL_NAME = "Chinese Prestudy"
@@ -48,9 +49,16 @@ def createModel():
     mw.col.models.save(model)
     return model
 
-def addNotesFromList(word_list):
+def addNotesFromList(deck_name, word_list):
+    model = mw.col.models.byName(MODEL_NAME)
+    deck = mw.col.decks.byName(deck_name)
+    deck['mid'] = model['id']
+    did = mw.col.decks.id(deck_name)
+    
     for word in word_list:
         n = mw.col.newNote()
         n['front'] = word[0]
         n['pinyin'] = word[1]
-        n['back'] = word[2]
+        n['back'] = '; '.join(word[2])
+        n.model()['did'] = did
+        mw.col.addNote(n)
