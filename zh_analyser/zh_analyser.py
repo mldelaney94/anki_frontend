@@ -175,7 +175,7 @@ def save_generated_list(word_list, location):
 
 def analyse(zh_input, freq_sort, add_freq_to_output, hsk_level, tocfl_level,
         simp_or_trad, add_speech_parts, upper_freq_bound, lower_freq_bound,
-        deck_name, include_surname_tag):
+        include_surname_tag):
     """Parses text and applies filters"""
     cc_cedict_parser.QUIET = True
     zh_dict = cc_cedict_parser.parse_dict(simp_or_trad)
@@ -190,7 +190,7 @@ def analyse(zh_input, freq_sort, add_freq_to_output, hsk_level, tocfl_level,
     word_list = add_pinyin_and_definition(word_list, zh_dict,
             include_surname_tag)
     word_list = add_parts_of_speech(word_list, add_speech_parts)
-    word_list = word_list.add_freq(word_list)
+    word_list = add_freq(word_list, add_freq_to_output)
     word_list = sort_by_freq(word_list, 0, freq_sort)
 
     return word_list
