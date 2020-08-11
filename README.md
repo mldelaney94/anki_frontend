@@ -3,4 +3,4 @@ This addon takes in any section of Chinese text and uses Jieba NLP to cut it up 
 
 ## In action
 
-[alt text](../images/tab_1.png "Logo Title Text 1")
+[Tab 1 of the addon](https://github.com/mldelaney94/anki_frontend/tree/master/images/tab_1.png "Tab 1")
